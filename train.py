@@ -1,15 +1,20 @@
 import torch
 
 from data.dataloader import TrainDataLoader
-from models.trial.model import MNISTConvClassifier
+
+from models.cnn.model import Model
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
+
+mps_device = torch.device("mps")
 
 
 def train_model_one_epoch_batch(model, optimizer, criterion, dataloader):
     model.train()
     train_loss = 0
     for idx, (x, y) in enumerate(dataloader):
+        x = x.to(mps_device)
+        y = y.to(mps_device)
         optimizer.zero_grad()
         output = model(x)
         loss = criterion(output, y)
@@ -28,6 +33,8 @@ def evaluate_model(model, criterion, dataloader):
     hits = 0
     misses = 0
     for idx, (x, y) in enumerate(dataloader):
+        x = x.to(mps_device)
+        y = y.to(mps_device)
         output = model(x)
         loss = criterion(output, y)
         val_loss += loss.item()
@@ -41,18 +48,15 @@ def evaluate_model(model, criterion, dataloader):
     return val_loss, accuracy
 
 
-
-
 def train():
-
     dataloader = TrainDataLoader()
     train_dataloader, val_dataloader = random_split(dataloader, [0.8, 0.2])
 
     train_dataloader = DataLoader(train_dataloader)
     val_dataloader = DataLoader(val_dataloader)
 
-    model = MNISTConvClassifier()
-
+    model = Model()
+    model.to(mps_device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
 
