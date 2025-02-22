@@ -1,5 +1,1 @@
-
-Add Early Stopping and Retrain the model
-Generate a submission file and Score it
-
 Evaluate with whole train data and find the images that are misclassified

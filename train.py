@@ -17,9 +17,11 @@ def train():
     train_dataloader, val_dataloader = random_split(dataloader, [0.8, 0.2])
 
     train_dataloader = DataLoader(
-        train_dataloader, shuffle=True, num_workers=6, persistent_workers=True
+        train_dataloader, shuffle=True, num_workers=7, persistent_workers=True, batch_size=128
     )
-    val_dataloader = DataLoader(val_dataloader, num_workers=6, persistent_workers=True)
+    val_dataloader = DataLoader(
+        val_dataloader, num_workers=7, persistent_workers=True, batch_size=128
+    )
 
     early_stopping = EarlyStopping(monitor="val_loss", mode="min", patience=10)
     logger = CSVLogger("logs")
@@ -27,7 +29,7 @@ def train():
     model = ModelTrainer()
     trainer = L.Trainer(
         deterministic=True,
-        max_epochs=10,
+        max_epochs=100,
         callbacks=[early_stopping],
         logger=logger,
     )

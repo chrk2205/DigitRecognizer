@@ -21,11 +21,18 @@ class ModelTrainer(L.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.criterion(y_hat, y)
+
+        self.log("train_loss", loss)
         return loss
 
     def validation_step(self, batch):
         x, y = batch
         y_hat = self(x)
         loss = self.criterion(y_hat, y)
+
+        preds = torch.argmax(y_hat, dim=1)
+        pred_correct = torch.argmax(y, dim=1)
+
         self.log("val_loss", loss)
+        self.log("val_accuracy", (preds == pred_correct).float().mean())
         return loss
