@@ -1,0 +1,9 @@
+Create a Own CNN
+Train it with the data for 10 epochs
+Save the Model with Every Epoch
+Generate a submission file and Score it
+
+Add Early Stopping and Retrain the model
+Generate a submission file and Score it
+
+Evaluate with whole train data and find the images that are misclassified

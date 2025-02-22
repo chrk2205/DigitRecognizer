@@ -1,9 +1,9 @@
 import torch
 
-from data.dataloader import MNISTDataLoader
-from model import NeuralNetwork, MNISTConvClassifier
-from torch.optim import SGD
+from data.dataloader import TrainDataLoader
+from models.trial.model import MNISTConvClassifier
 import torch.nn as nn
+from torch.utils.data import DataLoader, random_split
 
 
 def train_model_one_epoch_batch(model, optimizer, criterion, dataloader):
@@ -45,18 +45,13 @@ def evaluate_model(model, criterion, dataloader):
 
 def train():
 
-    dataloader = MNISTDataLoader(batch_size=10)
+    dataloader = TrainDataLoader()
+    train_dataloader, val_dataloader = random_split(dataloader, [0.8, 0.2])
 
-    train_dataloader, val_dataloader = torch.utils.data.random_split(dataloader, [0.8, 0.2])
+    train_dataloader = DataLoader(train_dataloader)
+    val_dataloader = DataLoader(val_dataloader)
 
-    # model = NeuralNetwork()
-
-    model = MNISTConvClassifier(
-        input_channels=28*28,
-        hidden_channels=256,
-        num_classes=10,
-        hidden_dim=25
-    )
+    model = MNISTConvClassifier()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
@@ -65,7 +60,9 @@ def train():
     val_loss, accuracy = evaluate_model(model, criterion, val_dataloader)
     print(f"Initial val loss: {val_loss}, accuracy: {accuracy}")
 
-    for epoch in range(1):
+    # TODO Early Stopping
+
+    for epoch in range(10):
         train_loss = train_model_one_epoch_batch(model, optimizer, criterion, train_dataloader)
         print(f"Epoch {epoch} train loss: {train_loss}")
 
